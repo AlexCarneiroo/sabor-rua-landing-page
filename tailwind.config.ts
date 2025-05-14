@@ -36,22 +36,22 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))', // Cor principal (ex: um laranja vibrante)
+					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
 				},
-        brand: {
-          DEFAULT: '#FF6700', // Laranja Sabor da Rua
-          dark: '#E05A00',
-          light: '#FF8A3D',
-          text: '#4A2B00', // Texto sobre fundos claros da marca
+        brand: { // 'brand' agora se refere ao novo tema azul primário
+          DEFAULT: 'hsl(var(--primary))',
+          dark: 'hsl(196, 80%, 42%)', // Tom mais escuro do azul primário
+          light: 'hsl(196, 80%, 62%)', // Tom mais claro do azul primário
+          text: 'hsl(var(--foreground))', // Para texto temático da marca no fundo da página (ex: cabeçalhos)
         },
-        neutral: {
-          DEFAULT: '#F8F5F2', // Um bege claro para fundos
-          text: '#5D5D5D',
-          darktext: '#333333',
+        neutral: { // 'neutral' alinhado com o fundo/texto principal
+          DEFAULT: 'hsl(var(--background))', // Fundo principal da página (escuro)
+          text: 'hsl(var(--foreground))',    // Texto principal da página (claro)
+          darktext: 'hsl(var(--foreground))', // Consolidado, já que o texto principal agora é claro
         },
 				secondary: {
-					DEFAULT: 'hsl(var(--secondary))', // Cor secundária (ex: um marrom terroso)
+					DEFAULT: 'hsl(var(--secondary))',
 					foreground: 'hsl(var(--secondary-foreground))'
 				},
 				destructive: {
@@ -63,7 +63,7 @@ export default {
 					foreground: 'hsl(var(--muted-foreground))'
 				},
 				accent: {
-					DEFAULT: 'hsl(var(--accent))', // Cor de destaque (ex: um amarelo)
+					DEFAULT: 'hsl(var(--accent))',
 					foreground: 'hsl(var(--accent-foreground))'
 				},
 				popover: {

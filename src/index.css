@@ -5,76 +5,76 @@
 
 @layer base {
   :root {
-    --background: 20 20% 97%; /* Bege claro - F8F5F2 */
-    --foreground: 20 10% 20%; /* Cinza escuro para texto - #333333 */
+    --background: 270 8% 13%; /* Dark Charcoal #221F26 */
+    --foreground: 240 3% 78%; /* Light Gray #C8C8C9 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 20 10% 20%;
+    --card: 270 8% 18%; /* Slightly lighter dark charcoal for cards */
+    --card-foreground: 240 3% 78%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 20 10% 20%;
+    --popover: 270 8% 18%;
+    --popover-foreground: 240 3% 78%;
 
-    --primary: 25 100% 50%; /* Laranja Sabor da Rua - #FF8000 (aproximado de #FF6700) */
-    --primary-foreground: 20 10% 98%; /* Branco para texto sobre primário */
+    --primary: 196 80% 52%; /* Bright Blue #1EAEDB */
+    --primary-foreground: 210 40% 98%; /* Almost white for text on primary */
 
-    --secondary: 25 30% 85%; /* Um cinza quente claro */
-    --secondary-foreground: 20 10% 20%;
+    --secondary: 270 2% 55%; /* Medium Gray #8A898C */
+    --secondary-foreground: 240 3% 78%; /* Light Gray for text on secondary */
 
-    --muted: 25 30% 90%;
-    --muted-foreground: 20 10% 40%;
+    --muted: 270 5% 30%; /* Darker muted gray */
+    --muted-foreground: 240 4% 65%; /* Lighter muted text */
 
-    --accent: 45 100% 50%; /* Amarelo para destaque */
-    --accent-foreground: 20 10% 10%;
+    --accent: 200 85% 60%; /* Sky Blue #33C3F0 - for accents */
+    --accent-foreground: 210 40% 98%; /* Almost white for text on accent */
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84.2% 60.2%; /* Mantendo o destrutivo similar */
     --destructive-foreground: 0 0% 98%;
 
-    --border: 20 20% 85%;
-    --input: 20 20% 88%;
-    --ring: 25 100% 50%;
+    --border: 270 5% 25%; /* Border color */
+    --input: 270 5% 22%; /* Input background */
+    --ring: 196 80% 52%; /* Ring color (same as primary) */
 
     --radius: 0.5rem;
 
     /* Cores do Sidebar - não usaremos por enquanto, mas mantendo consistência */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 270 8% 16%;
+    --sidebar-foreground: 240 3% 80%;
+    --sidebar-primary: 196 80% 52%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 200 85% 60%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 270 5% 28%;
+    --sidebar-ring: 196 80% 52%;
   }
 
   .dark {
-    /* Manter as variáveis dark mode, mas nosso foco inicial é light mode */
-    --background: 20 10% 10%;
-    --foreground: 20 20% 95%;
-    /* ... (outras variáveis dark mode podem ser ajustadas depois) ... */
-    --card: 20 10% 10%;
-    --card-foreground: 20 20% 95%;
+    /* Ajustando o dark mode para ser consistente com a nova paleta (ainda mais escuro ou similar) */
+    --background: 270 8% 10%; 
+    --foreground: 240 3% 85%; 
+    
+    --card: 270 8% 15%;
+    --card-foreground: 240 3% 85%;
 
-    --popover: 20 10% 10%;
-    --popover-foreground: 20 20% 95%;
+    --popover: 270 8% 15%;
+    --popover-foreground: 240 3% 85%;
 
-    --primary: 25 100% 50%; 
-    --primary-foreground: 20 10% 10%;
+    --primary: 196 75% 48%; /* Azul um pouco mais escuro/desaturado para dark mode */
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 20 10% 20%;
-    --secondary-foreground: 20 20% 95%;
+    --secondary: 270 2% 45%;
+    --secondary-foreground: 240 3% 85%;
 
-    --muted: 20 10% 20%;
-    --muted-foreground: 20 20% 70%;
+    --muted: 270 5% 25%;
+    --muted-foreground: 240 4% 60%;
 
-    --accent: 45 100% 50%;
-    --accent-foreground: 20 10% 10%;
+    --accent: 200 80% 55%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 70% 40%;
+    --destructive: 0 70% 45%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 20 10% 25%;
-    --input: 20 10% 25%;
-    --ring: 25 100% 60%;
+    --border: 270 5% 20%;
+    --input: 270 5% 18%;
+    --ring: 196 75% 48%;
   }
 }
 
@@ -88,6 +88,6 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif text-brand-text;
+    @apply font-serif text-brand-text; /* brand-text será redefinido no tailwind.config */
   }
 }
