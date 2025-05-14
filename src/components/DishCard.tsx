@@ -25,8 +25,8 @@ const DishCard: React.FC<DishCardProps> = ({ dish, animationDelay }) => {
         <img src={dish.imageSrc} alt={dish.name} className="w-full h-full object-cover" />
       </div>
       <div className="p-6 flex flex-col flex-grow">
-        <h3 className="text-2xl font-serif font-semibold text-brand-text mb-2">{dish.name}</h3>
-        <p className="text-neutral-text text-sm mb-4 flex-grow leading-relaxed">{dish.description}</p>
+        <h3 className="text-2xl font-serif font-semibold text-slate-800 mb-2">{dish.name}</h3>
+        <p className="text-slate-700 text-sm mb-4 flex-grow leading-relaxed">{dish.description}</p>
         <div className="flex items-center justify-between mt-auto">
           <span className="text-2xl font-bold text-brand-DEFAULT">{dish.price}</span>
           <Button variant="outline" size="sm" className="border-brand-DEFAULT text-brand-DEFAULT hover:bg-brand-DEFAULT hover:text-white">

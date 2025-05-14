@@ -8,18 +8,18 @@ const ContactSection = () => {
     <section id="contact" className="py-16 md:py-24 bg-white">
       <div className="container mx-auto">
         <div className="text-center mb-12 md:mb-16 animate-fade-in-up">
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-brand-text mb-4">
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-800 mb-4">
             Entre em <span className="text-brand-DEFAULT">Contato</span>
           </h2>
-          <p className="text-lg text-neutral-text max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-slate-700 max-w-2xl mx-auto leading-relaxed">
             Tem alguma dúvida, sugestão ou quer fazer uma reserva? Fale conosco!
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
           <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-            <h3 className="text-2xl font-serif font-semibold text-brand-text mb-6">Informações</h3>
-            <div className="space-y-5 text-neutral-text text-lg">
+            <h3 className="text-2xl font-serif font-semibold text-slate-800 mb-6">Informações</h3>
+            <div className="space-y-5 text-slate-700 text-lg">
               <div className="flex items-start">
                 <MapPin className="w-6 h-6 mr-3 mt-1 text-brand-DEFAULT flex-shrink-0" />
                 <span>Rua Fictícia das Delícias, 123<br />Bairro Saboroso, Cidade Exemplo - CE</span>
@@ -61,19 +61,19 @@ const ContactSection = () => {
             <form action="#" method="POST" className="space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-neutral-darktext mb-1">Nome Completo</label>
-                <input type="text" name="name" id="name" required className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-brand-DEFAULT focus:border-brand-DEFAULT transition-colors" />
+                <input type="text" name="name" id="name" required className="w-full px-4 py-3 bg-input text-foreground border-border rounded-md focus:ring-brand-DEFAULT focus:border-brand-DEFAULT transition-colors placeholder:text-muted-foreground" />
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-neutral-darktext mb-1">Seu Email</label>
-                <input type="email" name="email" id="email" required className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-brand-DEFAULT focus:border-brand-DEFAULT transition-colors" />
+                <input type="email" name="email" id="email" required className="w-full px-4 py-3 bg-input text-foreground border-border rounded-md focus:ring-brand-DEFAULT focus:border-brand-DEFAULT transition-colors placeholder:text-muted-foreground" />
               </div>
               <div>
                 <label htmlFor="subject" className="block text-sm font-medium text-neutral-darktext mb-1">Assunto</label>
-                <input type="text" name="subject" id="subject" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-brand-DEFAULT focus:border-brand-DEFAULT transition-colors" />
+                <input type="text" name="subject" id="subject" className="w-full px-4 py-3 bg-input text-foreground border-border rounded-md focus:ring-brand-DEFAULT focus:border-brand-DEFAULT transition-colors placeholder:text-muted-foreground" />
               </div>
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-neutral-darktext mb-1">Sua Mensagem</label>
-                <textarea name="message" id="message" rows={4} required className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-brand-DEFAULT focus:border-brand-DEFAULT transition-colors"></textarea>
+                <textarea name="message" id="message" rows={4} required className="w-full px-4 py-3 bg-input text-foreground border-border rounded-md focus:ring-brand-DEFAULT focus:border-brand-DEFAULT transition-colors placeholder:text-muted-foreground"></textarea>
               </div>
               <div>
                 <Button type="submit" size="lg" className="w-full bg-brand-DEFAULT hover:bg-brand-dark text-white text-lg">

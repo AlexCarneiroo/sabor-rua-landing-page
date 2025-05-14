@@ -16,13 +16,13 @@ const AboutSection = () => {
           </div>
         </div>
         <div className="animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-brand-text mb-6">
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-800 mb-6">
             Nossa História, Seu <span className="text-brand-DEFAULT">Sabor</span> Favorito
           </h2>
-          <p className="text-neutral-text text-lg mb-4 leading-relaxed">
+          <p className="text-slate-700 text-lg mb-4 leading-relaxed">
             No Sabor da Rua, acreditamos que comida de verdade tem o poder de conectar pessoas e criar memórias. Nascemos da paixão pela culinária de rua autêntica, trazendo pratos clássicos e inovações deliciosas para sua mesa.
           </p>
-          <p className="text-neutral-text text-lg mb-6 leading-relaxed">
+          <p className="text-slate-700 text-lg mb-6 leading-relaxed">
             Utilizamos ingredientes frescos, selecionados com carinho, e preparamos cada prato com a dedicação que você merece. Seja para um delivery rápido ou uma reserva especial, estamos prontos para te servir o melhor do sabor da rua.
           </p>
           <a href="#menu" className="inline-block bg-brand-DEFAULT text-white font-semibold px-8 py-3 rounded-md hover:bg-brand-dark transition-colors duration-300 text-lg">
