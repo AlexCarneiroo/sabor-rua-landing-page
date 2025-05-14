@@ -26,8 +26,10 @@ export default {
 		},
 		extend: {
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
-        serif: ['Playfair Display', 'serif'],
+        sans: ['Montserrat', 'sans-serif'], // Nova fonte padrão sans-serif
+        serif: ['Lora', 'serif'],           // Nova fonte padrão serif
+        poppins: ['Poppins', 'sans-serif'], // Opção adicional
+        playfair: ['Playfair Display', 'serif'], // Opção adicional
       },
 			colors: {
 				border: 'hsl(var(--border))',
