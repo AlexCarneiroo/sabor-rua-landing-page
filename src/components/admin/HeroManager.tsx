@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -6,9 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { db } from '@/lib/firebase'; // Importar db
-import { doc, getDoc, setDoc } from 'firebase/firestore'; // Importar funções do Firestore
-import { toast } from 'sonner'; // Importar toast
+import { db, storage } from '@/lib/firebase'; // Importar storage
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Importar funções do Storage
+import { toast } from 'sonner';
+import { Progress } from "@/components/ui/progress"; // Para barra de progresso
 
 const heroFormSchema = z.object({
   title: z.string().min(5, { message: "O título deve ter pelo menos 5 caracteres." }).max(100, { message: "O título não pode ter mais de 100 caracteres." }),
@@ -20,16 +23,21 @@ const heroFormSchema = z.object({
 
 export type HeroFormValues = z.infer<typeof heroFormSchema>;
 
-// Valores padrão caso não haja nada no Firebase
 export const defaultValues: HeroFormValues = {
-  title: "O Verdadeiro Sabor da Rua...",
-  subtitle: "Descubra pratos autênticos...",
+  title: "O Verdadeiro Sabor Único da Cidade", // Título genérico
+  subtitle: "Descubra pratos autênticos e deliciosos, preparados com os melhores ingredientes e muito carinho para você.",
   buttonText: "Peça Agora Online",
   buttonLink: "#menu",
   backgroundImageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop",
 };
 
 const HeroManager = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [currentBackgroundImageUrl, setCurrentBackgroundImageUrl] = useState<string | undefined>(defaultValues.backgroundImageUrl);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+
   const form = useForm<HeroFormValues>({
     resolver: zodResolver(heroFormSchema),
     defaultValues,
@@ -38,34 +46,127 @@ const HeroManager = () => {
 
   useEffect(() => {
     const fetchHeroData = async () => {
+      setIsLoading(true);
       try {
         const heroDocRef = doc(db, "content", "hero");
         const docSnap = await getDoc(heroDocRef);
         if (docSnap.exists()) {
-          form.reset(docSnap.data() as HeroFormValues);
-          console.log("Dados da Hero Section carregados do Firebase:", docSnap.data());
+          const data = docSnap.data() as HeroFormValues;
+          form.reset(data);
+          setCurrentBackgroundImageUrl(data.backgroundImageUrl);
         } else {
-          console.log("Nenhum dado da Hero Section encontrado no Firebase, usando valores padrão.");
-          form.reset(defaultValues); // Garante que os valores padrão sejam usados se não houver dados
+          form.reset(defaultValues);
+          setCurrentBackgroundImageUrl(defaultValues.backgroundImageUrl);
         }
       } catch (error) {
         console.error("Erro ao buscar dados da Hero Section:", error);
         toast.error("Erro ao carregar dados da Seção Hero.");
-        form.reset(defaultValues); // Garante que os valores padrão sejam usados em caso de erro
+        form.reset(defaultValues);
+        setCurrentBackgroundImageUrl(defaultValues.backgroundImageUrl);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchHeroData();
   }, [form]);
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      setSelectedFile(file);
+      // Preview da imagem selecionada
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCurrentBackgroundImageUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      form.setValue("backgroundImageUrl", "", { shouldValidate: true }); // Limpa URL antiga, pois vamos usar a nova
+    }
+  };
+
   const onSubmit = async (data: HeroFormValues) => {
+    setIsLoading(true);
+    setUploadProgress(null);
+    let finalData = { ...data };
+
+    if (selectedFile) {
+      const storageRef = ref(storage, `heroImages/${selectedFile.name}-${Date.now()}`);
+      const uploadTask = uploadBytesResumable(storageRef, selectedFile);
+
+      await new Promise<void>((resolve, reject) => {
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadProgress(progress);
+          },
+          (error) => {
+            console.error("Erro no upload da imagem:", error);
+            toast.error('Erro ao fazer upload da imagem de fundo.');
+            setIsLoading(false);
+            reject(error);
+          },
+          async () => {
+            try {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              finalData.backgroundImageUrl = downloadURL;
+              setCurrentBackgroundImageUrl(downloadURL); // Atualiza a URL para exibição
+              setSelectedFile(null); // Limpa o arquivo selecionado após o upload
+              resolve();
+            } catch (error) {
+              console.error("Erro ao obter URL de download:", error);
+              toast.error('Erro ao obter URL da imagem de fundo.');
+              setIsLoading(false);
+              reject(error);
+            }
+          }
+        );
+      });
+    } else if (data.backgroundImageUrl === "" && currentBackgroundImageUrl !== defaultValues.backgroundImageUrl && !selectedFile) {
+      // Se o campo URL está vazio e não é o default, e nenhum novo arquivo foi selecionado,
+      // significa que o usuário quer remover a imagem ou usar o padrão
+       // Neste caso, podemos manter a URL atual se ela existir, ou limpar se o usuário apagou a URL
+      // A lógica aqui pode ser refinada, por exemplo, para reverter para uma imagem padrão.
+      // Se a URL foi apagada no campo e não há novo upload, assumimos que quer limpar.
+      // Se o campo foi apagado e currentBackgroundImageUrl era uma URL válida, mantemos.
+      // Se o campo foi apagado e currentBackgroundImageUrl era o default, então fica vazio (ou o default se for a lógica).
+      // Por simplicidade, se data.backgroundImageUrl for "" e não houver selectedFile,
+      // e a URL atual não for a default, mantemos a atual. Se o usuário explicitamente apagar o campo de texto e
+      // não subir nova imagem, ele espera que a imagem seja removida ou revertida ao default.
+      // Se o campo está vazio, e nenhum arquivo foi selecionado, e o currentImageUrl não é o default,
+      // o usuário pode ter apagado a URL manualmente.
+      // Se backgroundImageUrl está vazio, mas currentBackgroundImageUrl tem valor (e não é o file preview),
+      // e nenhum selectedFile existe, então mantemos o currentBackgroundImageUrl.
+      // Se o usuário explicitamente limpou o campo URL e não selecionou novo arquivo,
+      // o backgroundImageURL será salvo como "".
+      // A form.setValue no handleFileChange para "" garante que se um novo arquivo for selecionado, a URL antiga é desconsiderada.
+      // Se não houver selectedFile, o valor de backgroundImageUrl do form (data) será usado.
+    }
+
+
+    // Se não houve upload (selectedFile é null), e finalData.backgroundImageUrl está vazio,
+    // mas currentBackgroundImageUrl (que pode ser de um load anterior) existe,
+    // então usamos o currentBackgroundImageUrl, a menos que o usuário tenha explicitamente apagado o campo de texto.
+    // O schema já valida se a URL é válida ou uma string vazia.
+    // O `form.reset` no useEffect já lida com o carregamento inicial.
+    // Se o campo URL foi apagado manualmente, `data.backgroundImageUrl` será `""`.
+    if (!selectedFile && data.backgroundImageUrl === "" && currentBackgroundImageUrl !== defaultValues.backgroundImageUrl) {
+      // Isso significa que o usuário apagou o campo URL mas não selecionou um novo arquivo.
+      // Se quiser permitir remover a imagem, `finalData.backgroundImageUrl` já será `""`.
+      // Se quiser reverter para o default ao apagar, faria aqui:
+      // finalData.backgroundImageUrl = defaultValues.backgroundImageUrl;
+    }
+
+
     try {
       const heroDocRef = doc(db, "content", "hero");
-      await setDoc(heroDocRef, data);
+      await setDoc(heroDocRef, finalData);
       toast.success('Dados da Seção Hero salvos com sucesso!');
-      console.log('Dados da Seção Hero salvos no Firebase:', data);
     } catch (error) {
       console.error("Erro ao salvar dados da Hero Section:", error);
       toast.error('Erro ao salvar dados da Seção Hero.');
+    } finally {
+      setIsLoading(false);
+      setUploadProgress(null);
     }
   };
 
@@ -73,12 +174,11 @@ const HeroManager = () => {
     <Card>
       <CardHeader>
         <CardTitle>Gerenciar Seção Hero</CardTitle>
-        <CardDescription>Altere os textos, link do botão e imagem de fundo da seção principal. Os dados são salvos automaticamente no Firebase.</CardDescription>
+        <CardDescription>Altere os textos, link do botão e imagem de fundo da seção principal.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* ...FormField para title (manter como está) ... */}
             <FormField
               control={form.control}
               name="title"
@@ -86,13 +186,12 @@ const HeroManager = () => {
                 <FormItem>
                   <FormLabel>Título Principal</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: O Melhor Sabor da Cidade" {...field} />
+                    <Input placeholder="Ex: O Melhor Sabor da Cidade" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {/* ...FormField para subtitle (manter como está) ... */}
             <FormField
               control={form.control}
               name="subtitle"
@@ -100,13 +199,12 @@ const HeroManager = () => {
                 <FormItem>
                   <FormLabel>Subtítulo</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Pratos deliciosos feitos com carinho" {...field} />
+                    <Input placeholder="Ex: Pratos deliciosos feitos com carinho" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {/* ...FormField para buttonText (manter como está) ... */}
             <FormField
               control={form.control}
               name="buttonText"
@@ -114,13 +212,12 @@ const HeroManager = () => {
                 <FormItem>
                   <FormLabel>Texto do Botão Principal</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Ver Cardápio" {...field} />
+                    <Input placeholder="Ex: Ver Cardápio" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {/* ...FormField para buttonLink (manter como está) ... */}
              <FormField
               control={form.control}
               name="buttonLink"
@@ -128,28 +225,58 @@ const HeroManager = () => {
                 <FormItem>
                   <FormLabel>Link do Botão Principal</FormLabel>
                   <FormControl>
-                    <Input type="url" placeholder="Ex: https://seu.site/cardapio" {...field} />
+                    <Input type="url" placeholder="Ex: https://seu.site/cardapio" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {/* ...FormField para backgroundImageUrl (manter como está) ... */}
-            <FormField
+            <FormItem>
+              <FormLabel>Imagem de Fundo</FormLabel>
+              {currentBackgroundImageUrl && !selectedFile && (
+                <img src={currentBackgroundImageUrl} alt="Preview da imagem de fundo atual" className="mt-2 mb-2 rounded-md max-h-48 w-auto" />
+              )}
+              {selectedFile && currentBackgroundImageUrl && ( // Preview da imagem selecionada
+                 <img src={currentBackgroundImageUrl} alt="Preview da nova imagem de fundo" className="mt-2 mb-2 rounded-md max-h-48 w-auto" />
+              )}
+              <FormControl>
+                <Input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleFileChange} 
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-light file:text-brand-DEFAULT hover:file:bg-brand-DEFAULT/80"
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormDescription>
+                Faça upload de uma nova imagem ou cole uma URL abaixo. Se ambos forem fornecidos, o upload terá prioridade.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+             <FormField
               control={form.control}
               name="backgroundImageUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL da Imagem de Fundo</FormLabel>
+                  <FormLabel>Ou URL da Imagem de Fundo (será substituída pelo upload, se houver)</FormLabel>
                   <FormControl>
-                    <Input type="url" placeholder="Ex: https://images.unsplash.com/..." {...field} value={field.value || ""} />
+                    <Input 
+                      type="url" 
+                      placeholder="Ex: https://images.unsplash.com/..." 
+                      {...field} 
+                      value={field.value || ""} 
+                      disabled={isLoading || !!selectedFile} // Desabilita se um arquivo foi selecionado para upload
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="bg-brand-DEFAULT hover:bg-brand-dark text-white">
-              Salvar Alterações da Seção Hero
+            {uploadProgress !== null && (
+              <Progress value={uploadProgress} className="w-full" />
+            )}
+            <Button type="submit" className="bg-brand-DEFAULT hover:bg-brand-dark text-white" disabled={isLoading}>
+              {isLoading ? (uploadProgress !== null ? `Enviando... ${uploadProgress.toFixed(0)}%` : "Salvando...") : "Salvar Alterações da Seção Hero"}
             </Button>
           </form>
         </Form>
