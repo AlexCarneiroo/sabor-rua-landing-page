@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, ShoppingCart, CalendarDays } from 'lucide-react';
+import { Menu, X, ShoppingCart } from 'lucide-react'; // Removido CalendarDays
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,9 +34,7 @@ const Header = () => {
           <Button variant="default" className="bg-brand-DEFAULT hover:bg-brand-dark text-white">
             <ShoppingCart className="mr-2 h-5 w-5" /> Peça Agora
           </Button>
-          <Button variant="outline" className="border-brand-DEFAULT text-brand-DEFAULT hover:bg-brand-DEFAULT hover:text-white">
-             <CalendarDays className="mr-2 h-5 w-5" /> Reservar Mesa
-          </Button>
+          {/* Botão de Reservar Mesa removido */}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -64,9 +62,7 @@ const Header = () => {
             <Button variant="default" className="bg-brand-DEFAULT hover:bg-brand-dark text-white w-3/4">
               <ShoppingCart className="mr-2 h-5 w-5" /> Peça Agora
             </Button>
-            <Button variant="outline" className="border-brand-DEFAULT text-brand-DEFAULT hover:bg-brand-DEFAULT hover:text-white w-3/4">
-              <CalendarDays className="mr-2 h-5 w-5" /> Reservar Mesa
-            </Button>
+            {/* Botão de Reservar Mesa removido do menu mobile */}
           </nav>
         </div>
       )}

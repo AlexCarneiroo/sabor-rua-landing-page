@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, CalendarDays, ArrowRight } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react'; // Removido CalendarDays, ArrowRight
 
 const HeroSection = () => {
   return (
@@ -12,7 +12,6 @@ const HeroSection = () => {
         style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop')" }} // Imagem de comida apetitosa
       ></div>
       <div className="absolute inset-0 bg-gradient-to-t from-neutral-DEFAULT via-neutral-DEFAULT/70 to-transparent"></div>
-
 
       <div className="container mx-auto relative z-10 text-center md:text-left py-16 md:py-24">
         <div className="max-w-2xl animate-fade-in-up">
@@ -27,10 +26,7 @@ const HeroSection = () => {
             <Button size="lg" className="bg-brand-DEFAULT hover:bg-brand-dark text-white text-lg px-8 py-6">
               <ShoppingCart className="mr-3 h-6 w-6" /> Peça Agora Online
             </Button>
-            <Button variant="outline" size="lg" className="border-brand-DEFAULT text-brand-DEFAULT hover:bg-brand-DEFAULT hover:text-white text-lg px-8 py-6 group">
-              <CalendarDays className="mr-3 h-6 w-6" /> Faça sua Reserva
-              <ArrowRight className="ml-2 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </Button>
+            {/* Botão "Faça sua Reserva" removido */}
           </div>
         </div>
       </div>
