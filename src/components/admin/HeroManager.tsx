@@ -1,17 +1,16 @@
-
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { db, storage } from '@/lib/firebase'; // Importar storage
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Card, CardContent, CardDescription as ShadcnCardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { db, storage } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Importar funções do Storage
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast } from 'sonner';
-import { Progress } from "@/components/ui/progress"; // Para barra de progresso
+import { Progress } from "@/components/ui/progress";
 
 const heroFormSchema = z.object({
   title: z.string().min(5, { message: "O título deve ter pelo menos 5 caracteres." }).max(100, { message: "O título não pode ter mais de 100 caracteres." }),
@@ -36,7 +35,6 @@ const HeroManager = () => {
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [currentBackgroundImageUrl, setCurrentBackgroundImageUrl] = useState<string | undefined>(defaultValues.backgroundImageUrl);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
 
   const form = useForm<HeroFormValues>({
     resolver: zodResolver(heroFormSchema),
@@ -130,7 +128,7 @@ const HeroManager = () => {
       // Se o campo foi apagado e currentBackgroundImageUrl era uma URL válida, mantemos.
       // Se o campo foi apagado e currentBackgroundImageUrl era o default, então fica vazio (ou o default se for a lógica).
       // Por simplicidade, se data.backgroundImageUrl for "" e não houver selectedFile,
-      // e a URL atual não for a default, mantemos a atual. Se o usuário explicitamente apagar o campo de texto e
+      // e a URL atual não for a default, mantemos a atual. Se o usuário explicitamente apagou o campo de texto e
       // não subir nova imagem, ele espera que a imagem seja removida ou revertida ao default.
       // Se o campo está vazio, e nenhum arquivo foi selecionado, e o currentImageUrl não é o default,
       // o usuário pode ter apagado a URL manualmente.
@@ -174,7 +172,7 @@ const HeroManager = () => {
     <Card>
       <CardHeader>
         <CardTitle>Gerenciar Seção Hero</CardTitle>
-        <CardDescription>Altere os textos, link do botão e imagem de fundo da seção principal.</CardDescription>
+        <ShadcnCardDescription>Altere os textos, link do botão e imagem de fundo da seção principal.</ShadcnCardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -268,6 +266,9 @@ const HeroManager = () => {
                       disabled={isLoading || !!selectedFile} // Desabilita se um arquivo foi selecionado para upload
                     />
                   </FormControl>
+                  <FormDescription>
+                    Cole a URL da imagem aqui. Se uma imagem for carregada acima, esta URL será ignorada.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
