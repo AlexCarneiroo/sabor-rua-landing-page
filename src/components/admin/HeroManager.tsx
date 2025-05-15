@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,7 +21,7 @@ const heroFormSchema = z.object({
 export type HeroFormValues = z.infer<typeof heroFormSchema>;
 
 // Valores padrão caso não haja nada no Firebase
-const defaultValues: HeroFormValues = {
+export const defaultValues: HeroFormValues = {
   title: "O Verdadeiro Sabor da Rua...",
   subtitle: "Descubra pratos autênticos...",
   buttonText: "Peça Agora Online",

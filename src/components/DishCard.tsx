@@ -1,14 +1,7 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
-
-interface Dish {
-  imageSrc: string;
-  name: string;
-  description: string;
-  price: string;
-}
+import { Dish } from '@/components/admin/MenuManager'; // Import the consistent Dish type
 
 interface DishCardProps {
   dish: Dish;

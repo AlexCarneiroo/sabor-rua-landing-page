@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import DishCard from './DishCard';
 import { db } from '@/lib/firebase';
 import { collection, onSnapshot, QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
-import { Dish } from '@/components/admin/MenuManager'; // Importar tipo Dish
+import { Dish } from '@/components/admin/MenuManager'; // Import the consistent Dish type
 
-const defaultFeaturedDishes: Dish[] = [ // Valores padrão caso o Firebase esteja vazio ou carregando
+const defaultFeaturedDishes: Dish[] = [ // Using the imported Dish type
   {
     id: '1',
     imageSrc: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1981&auto=format&fit=crop',
