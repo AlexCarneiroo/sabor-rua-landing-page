@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
+import { db } from '@/lib/firebase'; // Importar db
+import { doc, getDoc, setDoc } from 'firebase/firestore'; // Importar funções do Firestore
+import { toast } from 'sonner'; // Importar toast
 
 const heroFormSchema = z.object({
   title: z.string().min(5, { message: "O título deve ter pelo menos 5 caracteres." }).max(100, { message: "O título não pode ter mais de 100 caracteres." }),
@@ -17,14 +19,14 @@ const heroFormSchema = z.object({
   backgroundImageUrl: z.string().url({ message: "Por favor, insira uma URL de imagem válida." }).optional().or(z.literal('')),
 });
 
-type HeroFormValues = z.infer<typeof heroFormSchema>;
+export type HeroFormValues = z.infer<typeof heroFormSchema>;
 
-// Valores padrão para o formulário (eventualmente virão do Firebase)
-const defaultValues: Partial<HeroFormValues> = {
+// Valores padrão caso não haja nada no Firebase
+const defaultValues: HeroFormValues = {
   title: "O Verdadeiro Sabor da Rua...",
   subtitle: "Descubra pratos autênticos...",
   buttonText: "Peça Agora Online",
-  buttonLink: "#menu", // Link de exemplo
+  buttonLink: "#menu",
   backgroundImageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop",
 };
 
@@ -35,22 +37,49 @@ const HeroManager = () => {
     mode: "onChange",
   });
 
-  const onSubmit = (data: HeroFormValues) => {
-    console.log('Dados do formulário da Seção Hero:', data);
-    // Aqui, futuramente, enviaremos os dados para o Firebase
-    // Ex: await updateHeroData(data);
-    alert('Dados da Seção Hero enviados para o console! (Integração com Firebase pendente)');
+  useEffect(() => {
+    const fetchHeroData = async () => {
+      try {
+        const heroDocRef = doc(db, "content", "hero");
+        const docSnap = await getDoc(heroDocRef);
+        if (docSnap.exists()) {
+          form.reset(docSnap.data() as HeroFormValues);
+          console.log("Dados da Hero Section carregados do Firebase:", docSnap.data());
+        } else {
+          console.log("Nenhum dado da Hero Section encontrado no Firebase, usando valores padrão.");
+          form.reset(defaultValues); // Garante que os valores padrão sejam usados se não houver dados
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados da Hero Section:", error);
+        toast.error("Erro ao carregar dados da Seção Hero.");
+        form.reset(defaultValues); // Garante que os valores padrão sejam usados em caso de erro
+      }
+    };
+    fetchHeroData();
+  }, [form]);
+
+  const onSubmit = async (data: HeroFormValues) => {
+    try {
+      const heroDocRef = doc(db, "content", "hero");
+      await setDoc(heroDocRef, data);
+      toast.success('Dados da Seção Hero salvos com sucesso!');
+      console.log('Dados da Seção Hero salvos no Firebase:', data);
+    } catch (error) {
+      console.error("Erro ao salvar dados da Hero Section:", error);
+      toast.error('Erro ao salvar dados da Seção Hero.');
+    }
   };
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Gerenciar Seção Hero</CardTitle>
-        <CardDescription>Altere os textos, link do botão e imagem de fundo da seção principal.</CardDescription>
+        <CardDescription>Altere os textos, link do botão e imagem de fundo da seção principal. Os dados são salvos automaticamente no Firebase.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* ...FormField para title (manter como está) ... */}
             <FormField
               control={form.control}
               name="title"
@@ -64,6 +93,7 @@ const HeroManager = () => {
                 </FormItem>
               )}
             />
+            {/* ...FormField para subtitle (manter como está) ... */}
             <FormField
               control={form.control}
               name="subtitle"
@@ -77,6 +107,7 @@ const HeroManager = () => {
                 </FormItem>
               )}
             />
+            {/* ...FormField para buttonText (manter como está) ... */}
             <FormField
               control={form.control}
               name="buttonText"
@@ -90,6 +121,7 @@ const HeroManager = () => {
                 </FormItem>
               )}
             />
+            {/* ...FormField para buttonLink (manter como está) ... */}
              <FormField
               control={form.control}
               name="buttonLink"
@@ -103,6 +135,7 @@ const HeroManager = () => {
                 </FormItem>
               )}
             />
+            {/* ...FormField para backgroundImageUrl (manter como está) ... */}
             <FormField
               control={form.control}
               name="backgroundImageUrl"
@@ -110,7 +143,7 @@ const HeroManager = () => {
                 <FormItem>
                   <FormLabel>URL da Imagem de Fundo</FormLabel>
                   <FormControl>
-                    <Input type="url" placeholder="Ex: https://images.unsplash.com/..." {...field} />
+                    <Input type="url" placeholder="Ex: https://images.unsplash.com/..." {...field} value={field.value || ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
