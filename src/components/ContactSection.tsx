@@ -1,18 +1,60 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { defaultContactValues } from '@/components/admin/ContactManager';
+import type { ContactFormValues } from '@/components/admin/ContactManager';
 
 const ContactSection = () => {
+  const [contactData, setContactData] = useState<ContactFormValues>(defaultContactValues);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchContactData = async () => {
+      try {
+        const docRef = doc(db, "content", "contact");
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          setContactData(docSnap.data() as ContactFormValues);
+        } else {
+          console.log("Nenhum dado encontrado para a seção Contato, usando valores padrão");
+          setContactData(defaultContactValues);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados da seção Contato:", error);
+        setContactData(defaultContactValues);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContactData();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="contact" className="py-16 md:py-24 bg-white">
+        <div className="container mx-auto">
+          <div className="flex justify-center">
+            <div className="animate-pulse w-full max-w-4xl h-64 bg-gray-200 rounded-lg"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="contact" className="py-16 md:py-24 bg-white">
       <div className="container mx-auto">
         <div className="text-center mb-12 md:mb-16 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-800 mb-4">
-            Entre em <span className="text-brand-DEFAULT">Contato</span>
+            {contactData.title} <span className="text-brand-DEFAULT">{contactData.highlightedWord}</span>
           </h2>
           <p className="text-lg text-slate-700 max-w-2xl mx-auto leading-relaxed">
-            Tem alguma dúvida, sugestão ou quer fazer uma reserva? Fale conosco!
+            {contactData.description}
           </p>
         </div>
 
@@ -22,21 +64,21 @@ const ContactSection = () => {
             <div className="space-y-5 text-slate-700 text-lg">
               <div className="flex items-start">
                 <MapPin className="w-6 h-6 mr-3 mt-1 text-brand-DEFAULT flex-shrink-0" />
-                <span>Rua Fictícia das Delícias, 123<br />Bairro Saboroso, Cidade Exemplo - CE</span>
+                <span>{contactData.address}</span>
               </div>
               <div className="flex items-center">
                 <Phone className="w-6 h-6 mr-3 text-brand-DEFAULT flex-shrink-0" />
-                <span>(85) 91234-5678</span>
+                <span>{contactData.phone}</span>
               </div>
               <div className="flex items-center">
                 <Mail className="w-6 h-6 mr-3 text-brand-DEFAULT flex-shrink-0" />
-                <span>contato@sabordarua.com.br</span>
+                <span>{contactData.email}</span>
               </div>
               <div className="flex items-start">
                 <Clock className="w-6 h-6 mr-3 mt-1 text-brand-DEFAULT flex-shrink-0" />
                 <span>
-                  <strong>Seg - Sex:</strong> 11:00 - 23:00 <br />
-                  <strong>Sáb - Dom:</strong> 12:00 - 00:00
+                  <strong>Seg - Sex:</strong> {contactData.scheduleWeekdays} <br />
+                  <strong>Sáb - Dom:</strong> {contactData.scheduleWeekends}
                 </span>
               </div>
             </div>

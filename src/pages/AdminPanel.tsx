@@ -2,7 +2,9 @@
 import React from 'react';
 import HeroManager from '@/components/admin/HeroManager';
 import MenuManager from '@/components/admin/MenuManager';
-import SiteSettingsManager from '@/components/admin/SiteSettingsManager'; // Importar o novo componente
+import SiteSettingsManager from '@/components/admin/SiteSettingsManager';
+import AboutManager from '@/components/admin/AboutManager';
+import ContactManager from '@/components/admin/ContactManager';
 
 const AdminPanel = () => {
   return (
@@ -15,10 +17,16 @@ const AdminPanel = () => {
 
         <div className="space-y-8">
           <div>
-            <SiteSettingsManager /> {/* Adicionar o gerenciador de configurações do site */}
+            <SiteSettingsManager />
           </div>
           <div>
             <HeroManager />
+          </div>
+          <div>
+            <AboutManager />
+          </div>
+          <div>
+            <ContactManager />
           </div>
           <div>
             <MenuManager />
