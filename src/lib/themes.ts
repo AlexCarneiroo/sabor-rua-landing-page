@@ -1,4 +1,3 @@
-
 export interface ColorTheme {
   name: string;
   colors: {
@@ -39,13 +38,13 @@ export const themes: ColorTheme[] = [
   {
     name: "Padrão Escuro (Azul Brilhante)",
     colors: {
-      '--background': '270 8% 13%', // Dark Charcoal #221F26
-      '--foreground': '240 3% 78%', // Light Gray #C8C8C9
+      '--background': '270 8% 13%', 
+      '--foreground': '240 3% 78%', 
       '--card': '270 8% 18%',
       '--card-foreground': '240 3% 78%',
       '--popover': '270 8% 18%',
       '--popover-foreground': '240 3% 78%',
-      '--primary': '196 80% 52%', // Bright Blue #1EAEDB
+      '--primary': '196 80% 52%', 
       '--primary-foreground': '210 40% 98%',
       '--secondary': '270 2% 55%',
       '--secondary-foreground': '240 3% 78%',
@@ -200,6 +199,71 @@ export const themes: ColorTheme[] = [
       '--sidebar-border': '240 5% 90%',
       '--sidebar-ring': '196 80% 52%',
     }
+  },
+  {
+    name: "Ocean Breeze", // Novo tema claro
+    colors: {
+      '--background': '0 0% 100%',
+      '--foreground': '270 2% 25%',
+      '--card': '0 0% 96%',
+      '--card-foreground': '270 2% 25%',
+      '--popover': '0 0% 96%',
+      '--popover-foreground': '270 2% 25%',
+      '--primary': '199 83% 48%',
+      '--primary-foreground': '0 0% 98%',
+      '--secondary': '195 86% 57%',
+      '--secondary-foreground': '0 0% 98%',
+      '--muted': '210 10% 90%',
+      '--muted-foreground': '210 10% 50%',
+      '--accent': '196 80% 52%',
+      '--accent-foreground': '0 0% 98%',
+      '--destructive': '0 84.2% 60.2%',
+      '--destructive-foreground': '0 0% 98%',
+      '--border': '200 10% 88%',
+      '--input': '200 10% 94%',
+      '--ring': '199 83% 48%',
+      '--radius': '0.5rem',
+      '--sidebar-background': '200 20% 95%',
+      '--sidebar-foreground': '270 2% 20%',
+      '--sidebar-primary': '199 83% 48%',
+      '--sidebar-primary-foreground': '0 0% 98%',
+      '--sidebar-accent': '196 80% 52%',
+      '--sidebar-accent-foreground': '0 0% 98%',
+      '--sidebar-border': '200 10% 85%',
+      '--sidebar-ring': '199 83% 48%',
+    }
+  },
+  {
+    name: "Twilight Lavender", // Novo tema escuro
+    colors: {
+      '--background': '225 25% 14%',
+      '--foreground': '267 88% 86%',
+      '--card': '225 25% 18%',
+      '--card-foreground': '267 88% 86%',
+      '--popover': '225 25% 18%',
+      '--popover-foreground': '267 88% 86%',
+      '--primary': '262 90% 66%',
+      '--primary-foreground': '0 0% 98%',
+      '--secondary': '261 29% 50%',
+      '--secondary-foreground': '267 88% 90%',
+      '--muted': '230 20% 25%',
+      '--muted-foreground': '260 30% 70%',
+      '--accent': '290 84% 60%',
+      '--accent-foreground': '0 0% 98%',
+      '--destructive': '0 84.2% 60.2%',
+      '--destructive-foreground': '0 0% 98%',
+      '--border': '230 20% 30%',
+      '--input': '230 20% 22%',
+      '--ring': '262 90% 66%',
+      '--radius': '0.5rem',
+      '--sidebar-background': '225 25% 16%',
+      '--sidebar-foreground': '267 88% 88%',
+      '--sidebar-primary': '262 90% 66%',
+      '--sidebar-primary-foreground': '0 0% 98%',
+      '--sidebar-accent': '290 84% 60%',
+      '--sidebar-accent-foreground': '0 0% 98%',
+      '--sidebar-border': '230 20% 32%',
+      '--sidebar-ring': '262 90% 66%',
+    }
   }
 ];
-

@@ -71,18 +71,22 @@ const HeroManager = () => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
+      console.log("HeroManager: File selected:", file.name, file.type, file.size); // Log Adicionado
       setSelectedFile(file);
-      // Preview da imagem selecionada
       const reader = new FileReader();
       reader.onloadend = () => {
         setCurrentBackgroundImageUrl(reader.result as string);
       };
       reader.readAsDataURL(file);
-      form.setValue("backgroundImageUrl", "", { shouldValidate: true }); // Limpa URL antiga, pois vamos usar a nova
+      form.setValue("backgroundImageUrl", "", { shouldValidate: true });
+    } else {
+      console.log("HeroManager: File selection cancelled or no file."); // Log Adicionado
     }
   };
 
   const onSubmit = async (data: HeroFormValues) => {
+    console.log("HeroManager: onSubmit triggered with data:", data); // Log Adicionado
+    console.log("HeroManager: selectedFile is:", selectedFile ? selectedFile.name : null); // Log Adicionado
     setIsLoading(true);
     setUploadProgress(null);
     let finalData = { ...data };
@@ -98,7 +102,7 @@ const HeroManager = () => {
             setUploadProgress(progress);
           },
           (error) => {
-            console.error("Erro no upload da imagem:", error);
+            console.error("HeroManager: Upload task error:", error); // Log Adicionado
             toast.error('Erro ao fazer upload da imagem de fundo.');
             setIsLoading(false);
             reject(error);
@@ -107,11 +111,11 @@ const HeroManager = () => {
             try {
               const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
               finalData.backgroundImageUrl = downloadURL;
-              setCurrentBackgroundImageUrl(downloadURL); // Atualiza a URL para exibição
-              setSelectedFile(null); // Limpa o arquivo selecionado após o upload
+              setCurrentBackgroundImageUrl(downloadURL); 
+              setSelectedFile(null); 
               resolve();
             } catch (error) {
-              console.error("Erro ao obter URL de download:", error);
+              console.error("HeroManager: Get download URL error:", error); // Log Adicionado
               toast.error('Erro ao obter URL da imagem de fundo.');
               setIsLoading(false);
               reject(error);
@@ -160,7 +164,7 @@ const HeroManager = () => {
       await setDoc(heroDocRef, finalData);
       toast.success('Dados da Seção Hero salvos com sucesso!');
     } catch (error) {
-      console.error("Erro ao salvar dados da Hero Section:", error);
+      console.error("HeroManager: Firestore setDoc error:", error); // Log Adicionado
       toast.error('Erro ao salvar dados da Seção Hero.');
     } finally {
       setIsLoading(false);
@@ -234,7 +238,7 @@ const HeroManager = () => {
               {currentBackgroundImageUrl && !selectedFile && (
                 <img src={currentBackgroundImageUrl} alt="Preview da imagem de fundo atual" className="mt-2 mb-2 rounded-md max-h-48 w-auto" />
               )}
-              {selectedFile && currentBackgroundImageUrl && ( // Preview da imagem selecionada
+              {selectedFile && currentBackgroundImageUrl && ( 
                  <img src={currentBackgroundImageUrl} alt="Preview da nova imagem de fundo" className="mt-2 mb-2 rounded-md max-h-48 w-auto" />
               )}
               <FormControl>
@@ -242,7 +246,7 @@ const HeroManager = () => {
                   type="file" 
                   accept="image/*" 
                   onChange={handleFileChange} 
-                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-light file:text-brand-DEFAULT hover:file:bg-brand-DEFAULT/80"
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/80"
                   disabled={isLoading}
                 />
               </FormControl>
@@ -263,7 +267,7 @@ const HeroManager = () => {
                       placeholder="Ex: https://images.unsplash.com/..." 
                       {...field} 
                       value={field.value || ""} 
-                      disabled={isLoading || !!selectedFile} // Desabilita se um arquivo foi selecionado para upload
+                      disabled={isLoading || !!selectedFile} 
                     />
                   </FormControl>
                   <FormDescription>
@@ -276,7 +280,7 @@ const HeroManager = () => {
             {uploadProgress !== null && (
               <Progress value={uploadProgress} className="w-full" />
             )}
-            <Button type="submit" className="bg-brand-DEFAULT hover:bg-brand-dark text-white" disabled={isLoading}>
+            <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
               {isLoading ? (uploadProgress !== null ? `Enviando... ${uploadProgress.toFixed(0)}%` : "Salvando...") : "Salvar Alterações da Seção Hero"}
             </Button>
           </form>
